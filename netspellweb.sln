@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "netspellweb", "netspellweb\netspellweb.csproj", "{440CD02B-32DD-442F-B71B-2E63CCA4A587}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomControls", "CustomControls\CustomControls.csproj", "{B2149D7F-D594-4492-B2F2-3CE8AF9F5161}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{440CD02B-32DD-442F-B71B-2E63CCA4A587}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{440CD02B-32DD-442F-B71B-2E63CCA4A587}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{440CD02B-32DD-442F-B71B-2E63CCA4A587}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{440CD02B-32DD-442F-B71B-2E63CCA4A587}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2149D7F-D594-4492-B2F2-3CE8AF9F5161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2149D7F-D594-4492-B2F2-3CE8AF9F5161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2149D7F-D594-4492-B2F2-3CE8AF9F5161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2149D7F-D594-4492-B2F2-3CE8AF9F5161}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
