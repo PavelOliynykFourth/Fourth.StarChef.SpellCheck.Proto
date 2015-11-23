@@ -5,7 +5,12 @@
     self.addWordToDictionary = function (id) {
         var selector = '#' + id;
         var d = {};
-        d['text'] = $(selector).val();
+
+        var word = self.GetLastWord(id);
+        if (word === '')
+            return;
+
+        d['text'] = word;
         d['method'] = 'addWord';
         $.ajax({
             type: "POST",
@@ -27,9 +32,17 @@
 
     self.removeWordFromDictionary = function (id) {
         var selector = '#' + id;
+
         var d = {};
+
+        var word = self.GetLastWord(id);
+        if (word === '')
+            return;
+
         d['text'] = $(selector).val();
+
         d['method'] = 'removeWord';
+
         $.ajax({
             type: "POST",
             url: "/SpellChecker.ashx",
@@ -49,18 +62,14 @@
     };
 
     self.checkSpelling = function (id) {
-        var selector = '#' + id;
 
+        var selector = '#' + id;
 
         var d = {};
 
-        var textToCheck = $(selector).val();
-        var words = textToCheck.split(" ");
+        d['text'] = self.GetLastWord(id);
 
-        d['text'] = words != undefined && words.length > 0 ? words[words.length - 1] : '';
         d['method'] = 'checkSpelling';
-
-        console.log(d['text']);
 
         if (d['text'] === '')
             return;
@@ -106,6 +115,17 @@
                 console.log(data);
             }
         });
+    };
+
+    self.GetLastWord = function (id) {
+
+        var selector = '#' + id;
+        
+        var textToCheck = $(selector).val();
+
+        var words = textToCheck.split(" ");
+
+        return words != undefined && words.length > 0 ? words[words.length - 1] : '';        
     };
 
 }
