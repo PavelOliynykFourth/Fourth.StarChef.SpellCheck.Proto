@@ -2,16 +2,23 @@
 
     var self = spellChecker;
 
+    self.ClientId = "UnKnown";
+
+    self.SetClient = function (client) {
+        self.ClientId = client;
+    }
+
     self.addWordToDictionary = function (id) {
         var selector = '#' + id;
-        var d = {};
+        var d = self.GetAction('addWord');
 
         var word = self.GetLastWord(id);
+
         if (word === '')
             return;
 
         d['text'] = word;
-        d['method'] = 'addWord';
+
         $.ajax({
             type: "POST",
             url: "/SpellChecker.ashx",
@@ -33,15 +40,15 @@
     self.removeWordFromDictionary = function (id) {
         var selector = '#' + id;
 
-        var d = {};
+        var d = self.GetLastWord('removeWord');
 
         var word = self.GetLastWord(id);
+
         if (word === '')
             return;
 
-        d['text'] = $(selector).val();
+        d['text'] = word;
 
-        d['method'] = 'removeWord';
 
         $.ajax({
             type: "POST",
@@ -62,15 +69,12 @@
     };
 
     self.checkSpelling = function (id) {
-
         var selector = '#' + id;
 
-        var d = {};
+        var d = self.GetAction('checkSpelling');
 
         d['text'] = self.GetLastWord(id);
-
-        d['method'] = 'checkSpelling';
-
+        
         if (d['text'] === '')
             return;
 
@@ -101,6 +105,7 @@
                     $(selector).css("text-decoration", "none");
                     $(selector).css("color", "black");
                     $('#addButton').attr("disabled", "disabled");
+
                     if ($(selector).val() != "") {
                         $('#removeButton').removeAttr("disabled");
                     } else {
@@ -108,7 +113,6 @@
                     }
 
                 }
-
             },
             error: function (data) {
                 //alert("Error");
@@ -128,6 +132,12 @@
         return words != undefined && words.length > 0 ? words[words.length - 1] : '';        
     };
 
+    self.GetAction = function (action) {
+        var d = {};
+        d['method'] = action;
+        d['clientId'] = self.ClientId;
+        return d;
+    };
 }
 
 
