@@ -15,10 +15,10 @@ namespace CustomControls
 
             if (SpellingEnabled == "true")
             {
-                this.Attributes.Add("onkeyup", String.Format("checkSpelling('{0}')", id));
+                this.Attributes.Add("onkeyup", String.Format("  spellChecker.checkSpelling('{0}')", id));
                 base.Render(output);
-                output.Write("<input type='button' id='addButton' disabled='disabled' value='Add word to dictionary' onclick=\"addWordToDictionary('{0}')\"/> " +
-                             "<input type='button' id='removeButton' disabled='disabled' value='Remove word from dictionary' onclick=\"removeWordFromDictionary('{0}')\"/>" +
+                output.Write("<input type='button' id='addButton' disabled='disabled' value='Add' onclick=\"spellChecker.addWordToDictionary('{0}')\"/> " +
+                             "<input type='button' id='removeButton' disabled='disabled' value='Remove' onclick=\"spellChecker.removeWordFromDictionary('{0}');\"/>" +
                              "<ul class='optionsList'></ul>", id);
             }
 
