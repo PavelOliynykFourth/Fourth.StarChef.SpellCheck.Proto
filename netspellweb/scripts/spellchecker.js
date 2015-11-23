@@ -138,6 +138,81 @@
         d['clientId'] = self.ClientId;
         return d;
     };
+
+    self.Show = function (id) {
+
+        $('#listOfOptions').empty();
+        $("#spellCheckResult").empty();
+
+        var textToCheck = $("#" + id).val();
+
+        if (textToCheck === '')
+            return;
+
+        $('#spellCheckModal').modal('show');
+
+        var textToCheck = $("#" + id).val();
+        
+        var d = self.GetAction('checkSpellingAll');
+        d["text"] = textToCheck;
+
+            $.ajax({
+                type: "POST",
+                url: "/SpellChecker.ashx",
+                data: JSON.stringify(d),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",               
+                success: function (data) {
+
+                    //if (!data.isCorrect) {
+                    //}                    
+
+                    $("#spellCheckResult").html(data.Result);
+                    $("#spellCheckCorrect").html(data.Origin);
+
+                },
+                error: function (data) {
+                   
+                    console.log(data);
+                }
+            });
+             
+      
+        //spellCheckResult
+     
+    };
+
+    self.SuggetSome = function (word) {
+
+        var d = self.GetAction('Suggest');
+
+        d['text'] = word;
+
+        if (d['text'] === '')
+            return;
+
+        $.ajax({
+            type: "POST",
+            url: "/SpellChecker.ashx",
+            data: JSON.stringify(d),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                
+                $('#listOfOptions').empty();
+
+                $.each(data.suggestions, function (i, item) {
+                    $('<li />', { html: item }).appendTo('#listOfOptions');
+                });
+                                               
+            },
+            error: function (data) {
+                //alert("Error");
+                console.log(data);
+            }
+        });
+
+    };
 }
 
 

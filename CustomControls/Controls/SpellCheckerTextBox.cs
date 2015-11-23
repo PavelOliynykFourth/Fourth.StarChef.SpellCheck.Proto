@@ -19,7 +19,7 @@ namespace CustomControls
                 base.Render(output);
                 output.Write("<input type='button' id='addButton' disabled='disabled' value='Add' onclick=\"spellChecker.addWordToDictionary('{0}')\"/> " +
                              "<input type='button' id='removeButton' disabled='disabled' value='Remove' onclick=\"spellChecker.removeWordFromDictionary('{0}');\"/>" +
-                             "<ul class='optionsList'></ul>", id);
+                             "<ul class='optionsList' stlye='background-color: #FFF;'></ul>", id);
             }
 
             else base.Render(output);

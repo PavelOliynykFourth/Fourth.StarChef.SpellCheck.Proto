@@ -36,13 +36,32 @@ namespace netspellweb
                 case "checkSpelling":
                     CheckSpelling(context, text);
                     break;
-
+                case "checkSpellingAll":
+                    CheckSpellingAll(context, text);
+                    break;
+                case "Suggest":
+                    Suggest(context, text);
+                    break;
                 default:
                     throw new ArgumentException("unknown method");
             }
             
 
             
+        }
+
+        private void Suggest(HttpContext context, string textToSpell)
+        {
+            List<string> suggestions = Global.SpellEngine["en"].Suggest(textToSpell.Trim());
+            context.Response.Write(
+                _jss.Serialize(
+                    new
+                    {
+                        isCorrect = 0,
+                        suggestions = suggestions.ToArray()
+                    }
+                )
+            );
         }
 
         private void CheckSpelling(HttpContext context, string textToSpell)
@@ -72,6 +91,33 @@ namespace netspellweb
                     )
                 );
             }
+        }
+
+        private void CheckSpellingAll(HttpContext context, string textToSpell)
+        {
+            var words = textToSpell.Split(" ".ToCharArray() );
+            var result = string.Empty;            
+            for (var i = 0; i < words.Length; i++)
+            {
+                var word = words[i];
+                bool correct = Global.SpellEngine["en"].Spell(word);
+                if (correct)
+                    result += string.Format("&nbsp; {0}", word);
+                else
+                    result += string.Format("&nbsp;<font color='red' onclick=\"spellChecker.SuggetSome('{0}')\">{1}</font>", word, word);
+            }
+
+            context.Response.Write(
+                   _jss.Serialize(
+                       new
+                       {
+                           isCorrect = 1,
+                           Result = result,
+                           Origin = textToSpell
+                       }
+                   )
+               );
+          
         }
 
         private void AddWordToDictionary(string word)

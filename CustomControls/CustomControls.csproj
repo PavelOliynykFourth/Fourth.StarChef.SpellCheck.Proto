@@ -40,7 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SpellCheckerTextBox.cs" />
+    <Compile Include="Controls\SpellCheckerTextBoxV2.cs" />
+    <Compile Include="Controls\SpellCheckerTextBox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
