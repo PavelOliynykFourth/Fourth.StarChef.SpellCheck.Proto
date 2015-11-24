@@ -213,6 +213,26 @@
         });
 
     };
+
+    self.Spell = function (word, callBack) {
+        var d = self.GetAction('checkSpelling');
+
+        d['text'] = word;
+
+        $.ajax({
+            type: "POST",
+            url: "/SpellChecker.ashx",
+            data: JSON.stringify(d),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                callBack(word, data);
+            },
+            error: function (data) {
+                alert("Error");                
+            }
+        });
+    }
 }
 
 

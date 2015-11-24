@@ -9,13 +9,16 @@
     <script src="scripts/jquery-1.9.1.js"></script>
     <link href="Content/bootstrap.css" rel="stylesheet" />
     <script src="scripts/bootstrap.js"></script>    
+    <script src="scripts/knockout-3.4.0.debug.js"></script>
+    
     <script>
 
         var spellChecker = {};
 
     </script>
     <script src="scripts/spellchecker.js"></script>
-
+    
+    <script src="scripts/SpellCheckCtrl3View.js" type="text/javascript"></script>
     <style>
 
 ul > li
@@ -25,6 +28,66 @@ ul > li
 }
 
     </style>
+
+    <script>
+
+        $(document).ready(function () {
+
+            function SpellCheckViewCtrl3() {
+                this.isSelected = ko.observable(true);                
+                this.instantaneousValue = ko.observable();
+
+                this.throttledValue = ko.computed(this.instantaneousValue)
+                                        .extend({ throttle: 2500 });
+
+                // Keep a log of the throttled values
+                this.loggedValues = ko.observableArray([]);
+
+                this.throttledValue.subscribe(function (val) {                    
+
+                    if (val === undefined)
+                        return;
+
+                    var words = val.split(' ');
+
+                    
+
+                    $("#spellCheckPanel").empty();
+                    for (var i = 0; i < words.length; i++) {
+
+                        spellChecker.Spell(words[i], function (w, data) {
+                            if (data !== undefined) {
+                                
+                                var d = document;
+                                var e = d.createElement("font");
+                                if (data.isCorrect == 0) {
+                                    e.style.color = "red";                                    
+                                }
+                                e.innerHTML = "&nbsp;" + w;
+                                $("#spellCheckPanel").append(e);
+                            }
+                        });
+                        this.isSelected(false);
+                        
+
+                    }
+
+                }, this);
+                
+                this.setFocus = function () {
+                    $("#spellCheckPanel").empty();
+                    $("#spellCheckInput").focus();
+                    this.isSelected(true);
+                    console.log( this.isSelected() );
+                };
+            }
+
+            var model = new SpellCheckViewCtrl3();
+            ko.applyBindings(model, document.getElementById("SpellCheckViewCtrl3"));
+
+        });
+        
+    </script>
 </head>
 <body id="SpellingBody" style="MARGIN: 0px" runat="server">
     <form id="SpellingForm" name="SpellingForm" runat="server">
@@ -104,8 +167,30 @@ ul > li
                 </div>
             </div>
 
+
+            <div class="row">
+                <div class="col-lg-12">                  
+                    &nbsp;
+                </div>                
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">                  
+                    Demo C: SpellCheckerTextBox 
+                </div>                
+                <div class="col-lg-6" id="SpellCheckViewCtrl3">
+
+                    <p>Type stuff here:
+                    <input data-bind='value: instantaneousValue, valueUpdate: "afterkeydown", visible: isSelected() == true' id="spellCheckInput" style="width:350px"/></p>                    
+                    <div id="spellCheckPanel" style="width:350px; border: thin; position: relative; top: -32px; left: 100px" data-bind="click: setFocus, visible: isSelected() == false "></div>
+
+                </div>                
+            </div>
+
         </div>
         
+        <input id="fakeMe" type="button"/>
     </form>
 </body>
 </html>
+
