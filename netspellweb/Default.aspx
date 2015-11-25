@@ -126,26 +126,39 @@
 
                         }
                     });
+
+                    $("#spellCheckPanel").width($("#spellCheckInput").width());
                     this.isSelected(false);
 
                 }
 
             }, this);
 
-            this.setFocus = function () {
+            this.setFocus = function (e) {
+
+                //e.preventDefault();
 
                 this.instantaneousValue(this.GetSentence());
+
                 $("#spellCheckPanel").empty();
-                $("#spellCheckPanel").select();                
+
+                $("#spellCheckPanel").select();
+
                 this.isSelected(true);
+
                 $("#spellCheckInput").focus();
-                
+
+                return false
             };
 
             this.GetSentence = function () {
                 var s = "";
                 for (var i = 0 ; i < this.Words().length; i++) {
-                    s += " " + this.Words()[i];
+                    if (i == 0)
+                        s += this.Words()[i];
+                    else 
+                        s += " " + this.Words()[i];
+
                 }
                 this.Words.removeAll();
                 return s;
@@ -263,7 +276,7 @@
                 </div>                
                 <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
                     <input data-bind='value: instantaneousValue, valueUpdate: "afterkeydown", visible: isSelected() == true' id="spellCheckInput" style="width:350px"/></p>                    
-                    <div id="spellCheckPanel" style="height: 26px; width:450px; border: 1px solid lightgray; position: relative; top: -10px;" ondblclick="model.setFocus();"  data-bind="visible: isSelected() == false "></div>
+                    <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -10px;" oncontextmenu="return model.setFocus();"  data-bind="visible: isSelected() == false "></div>
                 </div>                
             </div>
 
