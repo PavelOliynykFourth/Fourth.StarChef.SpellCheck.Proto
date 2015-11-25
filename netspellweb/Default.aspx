@@ -135,11 +135,11 @@
             this.setFocus = function () {
 
                 this.instantaneousValue(this.GetSentence());
-
                 $("#spellCheckPanel").empty();
-                $("#spellCheckInput").focus();
+                $("#spellCheckPanel").select();                
                 this.isSelected(true);
-                console.log(this.isSelected());
+                $("#spellCheckInput").focus();
+                
             };
 
             this.GetSentence = function () {
@@ -160,6 +160,7 @@
             };
 
         }
+
 
         var model = new SpellCheckViewCtrl3();
 
