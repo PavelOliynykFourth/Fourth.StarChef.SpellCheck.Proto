@@ -12,13 +12,9 @@
     <script src="scripts/knockout-3.4.0.debug.js"></script>
     
     <script>
-
         var spellChecker = {};
-
     </script>
-    <script src="scripts/spellchecker.js"></script>
-    
-    <script src="scripts/SpellCheckCtrl3View.js" type="text/javascript"></script>
+    <script src="scripts/spellchecker.js"></script>        
     <style>
 
 /*ul > li
@@ -41,7 +37,7 @@
             this.instantaneousValue = ko.observable();
 
             this.throttledValue = ko.computed(this.instantaneousValue)
-                                    .extend({ throttle: 2500 });
+                                    .extend({ throttle: 3500 });
             
             this.loggedValues = ko.observableArray([]);
 
@@ -96,12 +92,21 @@
 
                                 div.appendChild(ul);
 
+                                var oli = d.createElement("li");
+                                var ao = d.createElement("a");
+
+                                ul.appendChild(oli);
+
+                                ao.innerHTML = w;
+                                ao.setAttribute("href", "#");
+                                ao.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + 0 + ", '" + w  + "')");
+
+                                oli.appendChild(ao);
+
                                 for (var i = 0; i < data.suggestions.length; i++) {
                                     var li = d.createElement("li");
                                     var a = d.createElement("a");
-                                    //li.innerHTML = data.suggestions[i];
-                                    //li.setAttribute("role", "presentation");
-                                    //li.setAttribute("class", "dropdown");
+                                    
                                     ul.appendChild(li);
 
                                     a.innerHTML = data.suggestions[i];
@@ -122,7 +127,6 @@
                         }
                     });
                     this.isSelected(false);
-
 
                 }
 
@@ -147,7 +151,10 @@
                 return s;
             };
 
-            this.ReplaceWord = function (pos, i, word) {                
+            this.ReplaceWord = function (pos, i, word) {
+                //button.setAttribute("class", "btn btn-danger btn-xs");                
+                document.getElementById("spellButton" + pos).removeAttribute("class");
+                document.getElementById("spellButton" + pos).setAttribute("class", "btn btn-success btn-xs");
                 document.getElementById("spellButton" + pos).innerHTML = word;
                 this.Words()[pos] = word;
             };
