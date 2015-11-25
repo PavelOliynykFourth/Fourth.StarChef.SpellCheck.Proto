@@ -161,7 +161,7 @@
 
                 }
                 this.Words.removeAll();
-                return s;
+                return s + " ";
             };
 
             this.ReplaceWord = function (pos, i, word) {
