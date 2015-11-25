@@ -50,14 +50,11 @@
 
                 this.throttledValue.subscribe(function (val) {                    
 
-                    if (val === undefined)
+                    if (val === undefined || this.Words.length > 0)
                         return;
 
                     var words = val.split(' ');
-                    
-
-                    
-
+                                        
                     $("#spellCheckPanel").empty();
                     for (var i = 0; i < words.length; i++) {
 
@@ -157,7 +154,7 @@
                     //lert("spellButton" + pos);
                     //alert(document.getElementById("spellButton" + pos) );
                     document.getElementById("spellButton" + pos).innerHTML = word;
-                    this.Words()[i] = word;
+                    this.Words()[pos] = word;
                 };
 
             }

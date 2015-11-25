@@ -225,6 +225,7 @@
             data: JSON.stringify(d),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            async: false,
             success: function (data) {
                 callBack(p, word, data);
             },
