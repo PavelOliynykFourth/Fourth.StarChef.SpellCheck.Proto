@@ -21,11 +21,11 @@
     <script src="scripts/SpellCheckCtrl3View.js" type="text/javascript"></script>
     <style>
 
-ul > li
+/*ul > li
 {    
   background-color: lightgray;
   width: 350px;
-}
+}*/
 
     </style>
 
@@ -59,12 +59,62 @@ ul > li
                             if (data !== undefined) {
                                 
                                 var d = document;
-                                var e = d.createElement("font");
+                                var div = d.createElement("div");
+                                div.style.display = "inline";
+                                
+                                $("#spellCheckPanel").append(div);
+
                                 if (data.isCorrect == 0) {
-                                    e.style.color = "red";                                    
+                                    //div.style.color = "red";
+                                    console.log(data);
+                                    div.className = "dropdown";
+
+                                    var button = d.createElement("button");
+                                    button.type = "button";
+                                    button.setAttribute("type", "button");
+                                    button.setAttribute("class", "btn btn-danger btn-xs");
+                                    button.setAttribute("data-toggle", "dropdown");
+                                    button.setAttribute("aria-haspopup", "true");
+                                    button.setAttribute("aria-expanded", "false");                                    
+                                    button.setAttribute("background-color", "red");
+                                    button.setAttribute("background-color", "red");
+
+                                    div.innerHTML = "&nbsp;&nbsp;"
+
+                                    button.innerHTML = w;
+
+                                    div.appendChild(button);
+
+                                    var ul = d.createElement("ul");
+                                    //ul.style.display = "inline";
+                                    ul.setAttribute("class", "dropdown-menu");
+                                    //ul.setAttribute("class", "nav nav-pills");
+                                    //ul.setAttribute("role", "tablist");
+                                    
+                                    div.appendChild(ul);
+
+                                    for (var i = 0; i < data.suggestions.length; i++) {
+                                        var li = d.createElement("li");
+                                        var a = d.createElement("a");
+                                        //li.innerHTML = data.suggestions[i];
+                                        //li.setAttribute("role", "presentation");
+                                        //li.setAttribute("class", "dropdown");
+                                        ul.appendChild(li);
+
+                                        a.innerHTML = data.suggestions[i];
+                                        a.setAttribute("href", "#");
+
+                                        li.appendChild(a);                                        
+                                    }
+                                    
+                                    
+
+                                } else {
+                                    div.innerHTML = "&nbsp;" + w;
                                 }
-                                e.innerHTML = "&nbsp;" + w;
-                                $("#spellCheckPanel").append(e);
+                                
+                                
+                                
                             }
                         });
                         this.isSelected(false);
@@ -178,12 +228,9 @@ ul > li
                 <div class="col-lg-6">                  
                     Demo C: SpellCheckerTextBox 
                 </div>                
-                <div class="col-lg-6" id="SpellCheckViewCtrl3">
-
-                    <p>Type stuff here:
+                <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
                     <input data-bind='value: instantaneousValue, valueUpdate: "afterkeydown", visible: isSelected() == true' id="spellCheckInput" style="width:350px"/></p>                    
-                    <div id="spellCheckPanel" style="width:350px; border: thin; position: relative; top: -32px; left: 100px" data-bind="click: setFocus, visible: isSelected() == false "></div>
-
+                    <div id="spellCheckPanel" style="height: 26px; width:450px; border: 1px solid lightgray; position: relative; top: -10px;" data-bind="visible: isSelected() == false "></div>
                 </div>                
             </div>
 
