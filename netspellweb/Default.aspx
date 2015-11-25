@@ -31,135 +31,133 @@
 
     <script>
 
-        var model;
+        
+
+        function SpellCheckViewCtrl3() {
+
+            this.isSelected = ko.observable(true);
+            this.Words = ko.observableArray();
+
+            this.instantaneousValue = ko.observable();
+
+            this.throttledValue = ko.computed(this.instantaneousValue)
+                                    .extend({ throttle: 2500 });
+            
+            this.loggedValues = ko.observableArray([]);
+
+            this.throttledValue.subscribe(function (val) {
+
+                if (val === undefined || this.Words.length > 0)
+                    return;
+
+                var words = val.split(' ');
+
+                $("#spellCheckPanel").empty();
+                for (var i = 0; i < words.length; i++) {
+
+                    this.Words.push(words[i]);
+
+                    spellChecker.Spell(i, words[i], function (pos, w, data) {
+                        if (data !== undefined) {
+
+                            var d = document;
+                            var div = d.createElement("div");
+                            div.style.display = "inline";
+
+                            $("#spellCheckPanel").append(div);
+
+                            if (data.isCorrect == 0) {
+                                //div.style.color = "red";
+                                console.log(data);
+                                div.className = "dropdown";
+
+                                var button = d.createElement("button");
+                                button.type = "button";
+                                button.setAttribute("id", "spellButton" + pos);
+                                button.setAttribute("type", "button");
+                                button.setAttribute("class", "btn btn-danger btn-xs");
+                                button.setAttribute("data-toggle", "dropdown");
+                                button.setAttribute("aria-haspopup", "true");
+                                button.setAttribute("aria-expanded", "false");
+                                button.setAttribute("background-color", "red");
+                                button.setAttribute("background-color", "red");
+
+                                div.innerHTML = "&nbsp;&nbsp;"
+
+                                button.innerHTML = w;
+
+                                div.appendChild(button);
+
+                                var ul = d.createElement("ul");
+                                //ul.style.display = "inline";
+                                ul.setAttribute("class", "dropdown-menu");
+                                //ul.setAttribute("class", "nav nav-pills");
+                                //ul.setAttribute("role", "tablist");
+
+                                div.appendChild(ul);
+
+                                for (var i = 0; i < data.suggestions.length; i++) {
+                                    var li = d.createElement("li");
+                                    var a = d.createElement("a");
+                                    //li.innerHTML = data.suggestions[i];
+                                    //li.setAttribute("role", "presentation");
+                                    //li.setAttribute("class", "dropdown");
+                                    ul.appendChild(li);
+
+                                    a.innerHTML = data.suggestions[i];
+                                    a.setAttribute("href", "#");
+                                    a.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + i + ", '" + data.suggestions[i] + "')");
+
+                                    li.appendChild(a);
+                                }
+
+
+
+                            } else {
+                                div.innerHTML = "&nbsp;" + w;
+                            }
+
+
+
+                        }
+                    });
+                    this.isSelected(false);
+
+
+                }
+
+            }, this);
+
+            this.setFocus = function () {
+
+                this.instantaneousValue(this.GetSentence());
+
+                $("#spellCheckPanel").empty();
+                $("#spellCheckInput").focus();
+                this.isSelected(true);
+                console.log(this.isSelected());
+            };
+
+            this.GetSentence = function () {
+                var s = "";
+                for (var i = 0 ; i < this.Words().length; i++) {
+                    s += " " + this.Words()[i];
+                }
+                this.Words.removeAll();
+                return s;
+            };
+
+            this.ReplaceWord = function (pos, i, word) {                
+                document.getElementById("spellButton" + pos).innerHTML = word;
+                this.Words()[pos] = word;
+            };
+
+        }
+
+        var model = new SpellCheckViewCtrl3();
 
         $(document).ready(function () {
-
-            function SpellCheckViewCtrl3() {
-
-                this.isSelected = ko.observable(true);
-                this.Words =  ko.observableArray();
-
-                this.instantaneousValue = ko.observable();
-
-                this.throttledValue = ko.computed(this.instantaneousValue)
-                                        .extend({ throttle: 2500 });
-
-                // Keep a log of the throttled values
-                this.loggedValues = ko.observableArray([]);
-
-                this.throttledValue.subscribe(function (val) {                    
-
-                    if (val === undefined || this.Words.length > 0)
-                        return;
-
-                    var words = val.split(' ');
-                                        
-                    $("#spellCheckPanel").empty();
-                    for (var i = 0; i < words.length; i++) {
-
-                        this.Words.push(words[i]);
-
-                        spellChecker.Spell(i, words[i], function (pos, w, data) {
-                            if (data !== undefined) {
-                                
-                                var d = document;
-                                var div = d.createElement("div");
-                                div.style.display = "inline";
-                                
-                                $("#spellCheckPanel").append(div);
-
-                                if (data.isCorrect == 0) {
-                                    //div.style.color = "red";
-                                    console.log(data);
-                                    div.className = "dropdown";
-
-                                    var button = d.createElement("button");
-                                    button.type = "button";
-                                    button.setAttribute("id", "spellButton" + pos);
-                                    button.setAttribute("type", "button");
-                                    button.setAttribute("class", "btn btn-danger btn-xs");
-                                    button.setAttribute("data-toggle", "dropdown");
-                                    button.setAttribute("aria-haspopup", "true");
-                                    button.setAttribute("aria-expanded", "false");                                    
-                                    button.setAttribute("background-color", "red");
-                                    button.setAttribute("background-color", "red");
-
-                                    div.innerHTML = "&nbsp;&nbsp;"
-
-                                    button.innerHTML = w;
-
-                                    div.appendChild(button);
-
-                                    var ul = d.createElement("ul");
-                                    //ul.style.display = "inline";
-                                    ul.setAttribute("class", "dropdown-menu");
-                                    //ul.setAttribute("class", "nav nav-pills");
-                                    //ul.setAttribute("role", "tablist");
-                                    
-                                    div.appendChild(ul);
-
-                                    for (var i = 0; i < data.suggestions.length; i++) {
-                                        var li = d.createElement("li");
-                                        var a = d.createElement("a");
-                                        //li.innerHTML = data.suggestions[i];
-                                        //li.setAttribute("role", "presentation");
-                                        //li.setAttribute("class", "dropdown");
-                                        ul.appendChild(li);
-
-                                        a.innerHTML = data.suggestions[i];
-                                        a.setAttribute("href", "#");
-                                        a.setAttribute("onclick", "return model.ReplaceWord("+ pos+ ", " + i + ", '" + data.suggestions[i] + "')");
-
-                                        li.appendChild(a);                                        
-                                    }
-                                    
-                                    
-
-                                } else {
-                                    div.innerHTML = "&nbsp;" + w;
-                                }
-                                
-                                
-                                
-                            }
-                        });
-                        this.isSelected(false);
-                        
-
-                    }
-
-                }, this);
-                
-                this.setFocus = function () {
-
-                    this.instantaneousValue( this.GetSentence() );
-
-                    $("#spellCheckPanel").empty();
-                    $("#spellCheckInput").focus();
-                    this.isSelected(true);
-                    console.log( this.isSelected() );
-                };
-
-                this.GetSentence = function () {
-                    var s = "";
-                    for (var i = 0 ; i < this.Words().length; i++) {
-                        s += " " + this.Words()[i];
-                    }
-                    this.Words.removeAll();
-                    return s;
-                };
-
-                this.ReplaceWord = function (pos, i, word) {
-                    //lert("spellButton" + pos);
-                    //alert(document.getElementById("spellButton" + pos) );
-                    document.getElementById("spellButton" + pos).innerHTML = word;
-                    this.Words()[pos] = word;
-                };
-
-            }
-
-            model = new SpellCheckViewCtrl3();
+           
             ko.applyBindings(model, document.getElementById("SpellCheckViewCtrl3"));
 
         });
@@ -261,9 +259,17 @@
                 </div>                
             </div>
 
+            <div class="row">
+                <div class="col-lg-6">                  
+                    Demo D: to be designed ..
+                </div>                
+                <div class="col-lg-6" >                    
+                    Input control will be placed here ..
+                </div>                
+            </div>
+
         </div>
-        
-        <input id="fakeMe" type="button"/>
+                
     </form>
 </body>
 </html>
