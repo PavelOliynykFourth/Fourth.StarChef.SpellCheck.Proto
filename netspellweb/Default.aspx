@@ -31,10 +31,15 @@
 
     <script>
 
+        var model;
+
         $(document).ready(function () {
 
             function SpellCheckViewCtrl3() {
-                this.isSelected = ko.observable(true);                
+
+                this.isSelected = ko.observable(true);
+                this.Words =  ko.observableArray();
+
                 this.instantaneousValue = ko.observable();
 
                 this.throttledValue = ko.computed(this.instantaneousValue)
@@ -49,13 +54,16 @@
                         return;
 
                     var words = val.split(' ');
+                    
 
                     
 
                     $("#spellCheckPanel").empty();
                     for (var i = 0; i < words.length; i++) {
 
-                        spellChecker.Spell(words[i], function (w, data) {
+                        this.Words.push(words[i]);
+
+                        spellChecker.Spell(i, words[i], function (pos, w, data) {
                             if (data !== undefined) {
                                 
                                 var d = document;
@@ -71,6 +79,7 @@
 
                                     var button = d.createElement("button");
                                     button.type = "button";
+                                    button.setAttribute("id", "spellButton" + pos);
                                     button.setAttribute("type", "button");
                                     button.setAttribute("class", "btn btn-danger btn-xs");
                                     button.setAttribute("data-toggle", "dropdown");
@@ -103,6 +112,7 @@
 
                                         a.innerHTML = data.suggestions[i];
                                         a.setAttribute("href", "#");
+                                        a.setAttribute("onclick", "return model.ReplaceWord("+ pos+ ", " + i + ", '" + data.suggestions[i] + "')");
 
                                         li.appendChild(a);                                        
                                     }
@@ -125,14 +135,34 @@
                 }, this);
                 
                 this.setFocus = function () {
+
+                    this.instantaneousValue( this.GetSentence() );
+
                     $("#spellCheckPanel").empty();
                     $("#spellCheckInput").focus();
                     this.isSelected(true);
                     console.log( this.isSelected() );
                 };
+
+                this.GetSentence = function () {
+                    var s = "";
+                    for (var i = 0 ; i < this.Words().length; i++) {
+                        s += " " + this.Words()[i];
+                    }
+                    this.Words.removeAll();
+                    return s;
+                };
+
+                this.ReplaceWord = function (pos, i, word) {
+                    //lert("spellButton" + pos);
+                    //alert(document.getElementById("spellButton" + pos) );
+                    document.getElementById("spellButton" + pos).innerHTML = word;
+                    this.Words()[i] = word;
+                };
+
             }
 
-            var model = new SpellCheckViewCtrl3();
+            model = new SpellCheckViewCtrl3();
             ko.applyBindings(model, document.getElementById("SpellCheckViewCtrl3"));
 
         });
@@ -230,7 +260,7 @@
                 </div>                
                 <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
                     <input data-bind='value: instantaneousValue, valueUpdate: "afterkeydown", visible: isSelected() == true' id="spellCheckInput" style="width:350px"/></p>                    
-                    <div id="spellCheckPanel" style="height: 26px; width:450px; border: 1px solid lightgray; position: relative; top: -10px;" data-bind="visible: isSelected() == false "></div>
+                    <div id="spellCheckPanel" style="height: 26px; width:450px; border: 1px solid lightgray; position: relative; top: -10px;" ondblclick="model.setFocus();"  data-bind="visible: isSelected() == false "></div>
                 </div>                
             </div>
 

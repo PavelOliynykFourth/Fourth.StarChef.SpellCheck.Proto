@@ -214,7 +214,7 @@
 
     };
 
-    self.Spell = function (word, callBack) {
+    self.Spell = function (p, word, callBack) {
         var d = self.GetAction('checkSpelling');
 
         d['text'] = word;
@@ -226,7 +226,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
-                callBack(word, data);
+                callBack(p, word, data);
             },
             error: function (data) {
                 alert("Error");                
