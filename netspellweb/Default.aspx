@@ -46,6 +46,11 @@
                 if (val === undefined || this.Words.length > 0)
                     return;
 
+            //    this.Run(val);
+
+            }, this);
+
+            this.Run = function (val) {
                 var words = val.split(' ');
 
                 $("#spellCheckPanel").empty();
@@ -99,14 +104,14 @@
 
                                 ao.innerHTML = w;
                                 ao.setAttribute("href", "#");
-                                ao.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + 0 + ", '" + w  + "')");
+                                ao.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + 0 + ", '" + w + "')");
 
                                 oli.appendChild(ao);
 
                                 for (var i = 0; i < data.suggestions.length; i++) {
                                     var li = d.createElement("li");
                                     var a = d.createElement("a");
-                                    
+
                                     ul.appendChild(li);
 
                                     a.innerHTML = data.suggestions[i];
@@ -127,12 +132,18 @@
                         }
                     });
 
+                    $("#spellCheckPanel").height($("#spellCheckInput").height());
                     $("#spellCheckPanel").width($("#spellCheckInput").width());
+
                     this.isSelected(false);
 
                 }
+            };
 
-            }, this);
+            this.SpellCheck = function () {
+                if (this.throttledValue() != "")
+                    this.Run( this.throttledValue() );
+            };
 
             this.setFocus = function (e) {
 
@@ -275,19 +286,12 @@
                     Demo C: SpellCheckerTextBox 
                 </div>                
                 <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
-                    <input data-bind='value: instantaneousValue, valueUpdate: "afterkeydown", visible: isSelected() == true' id="spellCheckInput" style="width:350px"/></p>                    
-                    <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -10px;" oncontextmenu="return model.setFocus();"  data-bind="visible: isSelected() == false "></div>
+                    <textarea wrap="hard" cols="25" rows="5" data-bind='value: instantaneousValue, valueUpdate: "afterkeydown", visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
+                    <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;" oncontextmenu="return model.setFocus();"  data-bind="visible: isSelected() == false "></div>
                 </div>                
             </div>
 
-            <div class="row">
-                <div class="col-lg-6">                  
-                    Demo D: to be designed ..
-                </div>                
-                <div class="col-lg-6" >                    
-                    Input control will be placed here ..
-                </div>                
-            </div>
+        
 
         </div>
                 
