@@ -34,21 +34,29 @@
             this.isSelected = ko.observable(true);
             this.Words = ko.observableArray();
 
-            this.instantaneousValue = ko.observable();
+            this.textToSpellCheck  = ko.observable();
 
-            this.throttledValue = ko.computed(this.instantaneousValue)
-                                    .extend({ throttle: 3500 });
+            //this.instantaneousValue = ko.observable();
+
+            //this.throttledValue = ko.computed(this.instantaneousValue)
+             //                       .extend({ throttle: 3500 });
             
-            this.loggedValues = ko.observableArray([]);
+            //this.loggedValues = ko.observableArray([]);
 
-            this.throttledValue.subscribe(function (val) {
+            //this.throttledValue.subscribe(function (val) {
 
-                if (val === undefined || this.Words.length > 0)
-                    return;
+            //    if (val === undefined || this.Words.length > 0)
+            //        return;
 
-            //    this.Run(val);
+                //this.Words.removeAll();
 
-            }, this);
+                //var words = val.split(' ');
+                
+                //for (var i = 0; i < words.length; i++) {
+                //    this.Words.push(words[i]);
+                //}            
+
+            //}, this);
 
             this.Run = function (val) {
                 var words = val.split(' ');
@@ -77,11 +85,12 @@
                                 button.setAttribute("id", "spellButton" + pos);
                                 button.setAttribute("type", "button");
                                 button.setAttribute("class", "btn btn-danger btn-xs");
-                                button.setAttribute("data-toggle", "dropdown");
-                                button.setAttribute("aria-haspopup", "true");
-                                button.setAttribute("aria-expanded", "false");
-                                button.setAttribute("background-color", "red");
-                                button.setAttribute("background-color", "red");
+                                ///button.setAttribute("data-toggle", "dropdown");
+                                button.setAttribute("oncontextmenu", " model.Suggestions(event, " + pos + ") ");
+                                //button.setAttribute("aria-haspopup", "true");
+                                //button.setAttribute("aria-expanded", "false");
+                                //button.setAttribute("background-color", "red");
+                                //button.setAttribute("background-color", "red");
 
                                 div.innerHTML = "&nbsp;&nbsp;"
 
@@ -90,6 +99,7 @@
                                 div.appendChild(button);
 
                                 var ul = d.createElement("ul");
+                                ul.setAttribute("id", "dropDownMenu" + pos);
                                 //ul.style.display = "inline";
                                 ul.setAttribute("class", "dropdown-menu");
                                 //ul.setAttribute("class", "nav nav-pills");
@@ -140,16 +150,37 @@
                 }
             };
 
+            this.Suggestions = function (e, id) {
+                //e.preventDefault();
+                if (e !== undefined) {
+                    e.preventDefault();
+                    //alert(id);
+                    //spellButton
+                    //$("#spellButton" + id).dropdown();                    
+
+                    if (this.SelectedDropDown !== undefined)
+                        this.SelectedDropDown.hide();
+
+                    this.SelectedDropDown = $("#dropDownMenu" + id);
+
+                    $("#dropDownMenu" + id).show();
+
+                }
+                                
+            };
+
+            this.SelectedDropDown;
+
             this.SpellCheck = function () {
-                if (this.throttledValue() != "")
-                    this.Run( this.throttledValue() );
+                if (this.textToSpellCheck() != "")
+                    this.Run(this.textToSpellCheck());
             };
 
             this.setFocus = function (e) {
 
                 //e.preventDefault();
 
-                this.instantaneousValue(this.GetSentence());
+                this.textToSpellCheck(this.GetSentence());
 
                 $("#spellCheckPanel").empty();
 
@@ -176,6 +207,10 @@
             };
 
             this.ReplaceWord = function (pos, i, word) {
+
+                if (this.SelectedDropDown !== undefined)
+                    this.SelectedDropDown.hide();
+
                 //button.setAttribute("class", "btn btn-danger btn-xs");                
                 document.getElementById("spellButton" + pos).removeAttribute("class");
                 document.getElementById("spellButton" + pos).setAttribute("class", "btn btn-success btn-xs");
@@ -191,6 +226,21 @@
         $(document).ready(function () {
            
             ko.applyBindings(model, document.getElementById("SpellCheckViewCtrl3"));
+
+        });
+
+
+        $(document).click(function (e) {
+
+            if (e.toElement.parentElement != null && e.toElement.parentElement.localName == "li") {
+                e.preventDefault();
+                return;
+            } else if (e.toElement.id == "spellCheckPanel") {
+                model.setFocus();
+            }
+
+            if (model.SelectedDropDown !== undefined)
+                model.SelectedDropDown.hide();
 
         });
         
@@ -286,12 +336,10 @@
                     Demo C: SpellCheckerTextBox 
                 </div>                
                 <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
-                    <textarea wrap="hard" cols="25" rows="5" data-bind='value: instantaneousValue, valueUpdate: "afterkeydown", visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
-                    <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;" oncontextmenu="return model.setFocus();"  data-bind="visible: isSelected() == false "></div>
+                    <textarea wrap="hard" cols="25" rows="5" data-bind='value: textToSpellCheck, visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
+                    <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;"  oncontextmenu=" model.Suggestions()"  data-bind="visible: isSelected() == false "></div>
                 </div>                
-            </div>
-
-        
+            </div>          
 
         </div>
                 
