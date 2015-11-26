@@ -17,12 +17,6 @@
     <script src="scripts/spellchecker.js"></script>        
     <style>
 
-/*ul > li
-{    
-  background-color: lightgray;
-  width: 350px;
-}*/
-
     </style>
 
     <script>
@@ -35,28 +29,6 @@
             this.Words = ko.observableArray();
 
             this.textToSpellCheck  = ko.observable();
-
-            //this.instantaneousValue = ko.observable();
-
-            //this.throttledValue = ko.computed(this.instantaneousValue)
-             //                       .extend({ throttle: 3500 });
-            
-            //this.loggedValues = ko.observableArray([]);
-
-            //this.throttledValue.subscribe(function (val) {
-
-            //    if (val === undefined || this.Words.length > 0)
-            //        return;
-
-                //this.Words.removeAll();
-
-                //var words = val.split(' ');
-                
-                //for (var i = 0; i < words.length; i++) {
-                //    this.Words.push(words[i]);
-                //}            
-
-            //}, this);
 
             this.Run = function (val) {
                 var words = val.split(' ');
@@ -81,21 +53,16 @@
                             $("#spellCheckPanel").append(div);
 
                             if (data.isCorrect == 0) {
-                                //div.style.color = "red";
-                                console.log(data);
+
                                 div.className = "dropdown";
 
                                 var button = d.createElement("button");
                                 button.type = "button";
                                 button.setAttribute("id", "spellButton" + pos);
                                 button.setAttribute("type", "button");
-                                button.setAttribute("class", "btn btn-danger btn-xs");
-                                ///button.setAttribute("data-toggle", "dropdown");
+                                button.setAttribute("class", "btn btn-danger btn-xs");                                
                                 button.setAttribute("oncontextmenu", " model.Suggestions(event, " + pos + ") ");
-                                //button.setAttribute("aria-haspopup", "true");
-                                //button.setAttribute("aria-expanded", "false");
-                                //button.setAttribute("background-color", "red");
-                                //button.setAttribute("background-color", "red");
+                                
 
                                 div.innerHTML = "&nbsp;&nbsp;"
 
@@ -104,22 +71,10 @@
                                 div.appendChild(button);
 
                                 var ul = d.createElement("ul");
-                                ul.setAttribute("id", "dropDownMenu" + pos);
-                                //ul.style.display = "inline";
+                                ul.setAttribute("id", "dropDownMenu" + pos);                                
                                 ul.setAttribute("class", "dropdown-menu");
-                                //ul.setAttribute("class", "nav nav-pills");
-                                //ul.setAttribute("role", "tablist");
-
-                                div.appendChild(ul);
-
-                                //var oli = d.createElement("li");
-                                //var ao = d.createElement("a");
-                                //ul.appendChild(oli);
-                                //ao.innerHTML = w;
-                                //ao.setAttribute("href", "#");
-                                //ao.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + 0 + ", '" + w + "')");
-
-                                //oli.appendChild(ao);
+                               
+                                div.appendChild(ul);                                
 
                                 for (var i = 0; i < data.suggestions.length; i++) {
                                     var li = d.createElement("li");
@@ -134,14 +89,9 @@
                                     li.appendChild(a);
                                 }
 
-
-
                             } else {
                                 div.innerHTML = "&nbsp;" + w;
                             }
-
-
-
                         }
                     });
 
@@ -154,13 +104,10 @@
             };
 
             this.Suggestions = function (e, id) {
-                //e.preventDefault();
+                
                 if (e !== undefined) {
                     e.preventDefault();
-                    //alert(id);
-                    //spellButton
-                    //$("#spellButton" + id).dropdown();                    
-
+                
                     if (this.SelectedDropDown !== undefined)
                         this.SelectedDropDown.hide();
 
@@ -180,8 +127,6 @@
             };
 
             this.setFocus = function (e) {
-
-                //e.preventDefault();
 
                 this.textToSpellCheck(this.GetSentence());
 
@@ -213,8 +158,7 @@
 
                 if (this.SelectedDropDown !== undefined)
                     this.SelectedDropDown.hide();
-
-                //button.setAttribute("class", "btn btn-danger btn-xs");                
+                
                 document.getElementById("spellButton" + pos).removeAttribute("class");
                 document.getElementById("spellButton" + pos).setAttribute("class", "btn btn-success btn-xs");
                 document.getElementById("spellButton" + pos).innerHTML = word;
@@ -259,75 +203,12 @@
                     SpellChecker Demo                    
                 </div>                
             </div>
-
-            <div class="row">
-                <div class="col-lg-6">
-                    Demo A: SpellCheckerTextBox control: 
-                    - if user entered sentence: last word will be spell checked!
-                </div>
-                <div class="col-lg-6">
-                    <sc:SpellCheckerTextBox SpellingEnabled="true" runat="server" Width="250px" ID="spellcheckerFirst"/>                     
-                </div>
-            </div>
-
+        
             <div class="row">
                 <div class="col-lg-12">                  
                 </div>                
             </div>
-
-            <div class="row">
-                <div class="col-lg-6">
-                    Demo B: SpellCheckerTextBox 
-                    
-                </div>
-                <div class="col-lg-6">
-                    <sc:SpellCheckerTextBoxV2 SpellingEnabled="true" runat="server" Width="250px" ID="SpellCheckerTextBox2"/>                     
-
-                    <div class="modal fade" id="spellCheckModal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title">Custom Spell Checker</h4>
-                                </div>
-                                <div class="modal-body" >
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-lg-8" id="spellCheckResult">
-                                                Spell Check Results ...
-                                            </div>
-                                            <div class="col-lg-4" >       
-                                                <ol id="listOfOptions"></ol>                                        
-                                                <%--<textarea id="spellCheckCorrect" cols="15" rows="5"></textarea>--%>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-lg-8" id="Div1">
-                                                <textarea id="spellCheckCorrect" cols="15" rows="5"></textarea>
-                                            </div>
-                                            <div class="col-lg-4" >                                                       
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save</button>
-                                </div>
-                            </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
-
-
-                </div>
-            </div>
-
-
+        
             <div class="row">
                 <div class="col-lg-12">                  
                     &nbsp;
@@ -339,7 +220,7 @@
                     Demo C: SpellCheckerTextBox 
                 </div>                
                 <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
-                    <textarea wrap="hard" cols="25" rows="1" data-bind='value: textToSpellCheck, visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
+                    <textarea wrap="hard" cols="25" rows="5" data-bind='value: textToSpellCheck, visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
                     <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;"  oncontextmenu=" model.Suggestions()"  data-bind="visible: isSelected() == false "></div>
                 </div>                
             </div>          
