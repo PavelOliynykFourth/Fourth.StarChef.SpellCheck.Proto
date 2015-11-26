@@ -179,10 +179,10 @@
 
         $(document).click(function (e) {
 
-            if (e.toElement.parentElement != null && e.toElement.parentElement.localName == "li") {
+            if (e.target.parentElement != null && e.target.parentElement.localName == "li") {
                 e.preventDefault();
                 return;
-            } else if (e.toElement.id == "spellCheckPanel") {
+            } else if (e.target.id == "spellCheckPanel") {
                 model.setFocus();
             }
 
@@ -220,7 +220,7 @@
                     Demo C: SpellCheckerTextBox 
                 </div>                
                 <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
-                    <textarea wrap="hard" cols="25" rows="5" data-bind='value: textToSpellCheck, visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
+                    <textarea  cols="25" rows="5" data-bind='value: textToSpellCheck, visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
                     <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;"  oncontextmenu=" model.Suggestions()"  data-bind="visible: isSelected() == false "></div>
                 </div>                
             </div>          
