@@ -64,6 +64,11 @@
                 $("#spellCheckPanel").empty();
                 for (var i = 0; i < words.length; i++) {
 
+                    var word = words[i].trim();
+
+                    if (word.length == 0)
+                        return;
+
                     this.Words.push(words[i]);
 
                     spellChecker.Spell(i, words[i], function (pos, w, data) {
@@ -107,16 +112,14 @@
 
                                 div.appendChild(ul);
 
-                                var oli = d.createElement("li");
-                                var ao = d.createElement("a");
+                                //var oli = d.createElement("li");
+                                //var ao = d.createElement("a");
+                                //ul.appendChild(oli);
+                                //ao.innerHTML = w;
+                                //ao.setAttribute("href", "#");
+                                //ao.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + 0 + ", '" + w + "')");
 
-                                ul.appendChild(oli);
-
-                                ao.innerHTML = w;
-                                ao.setAttribute("href", "#");
-                                ao.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + 0 + ", '" + w + "')");
-
-                                oli.appendChild(ao);
+                                //oli.appendChild(ao);
 
                                 for (var i = 0; i < data.suggestions.length; i++) {
                                     var li = d.createElement("li");
@@ -142,7 +145,7 @@
                         }
                     });
 
-                    $("#spellCheckPanel").height($("#spellCheckInput").height());
+                    $("#spellCheckPanel").height($("#spellCheckInput").height() + 5);
                     $("#spellCheckPanel").width($("#spellCheckInput").width());
 
                     this.isSelected(false);
@@ -336,7 +339,7 @@
                     Demo C: SpellCheckerTextBox 
                 </div>                
                 <div class="col-lg-6" id="SpellCheckViewCtrl3">                    
-                    <textarea wrap="hard" cols="25" rows="5" data-bind='value: textToSpellCheck, visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
+                    <textarea wrap="hard" cols="25" rows="1" data-bind='value: textToSpellCheck, visible: isSelected() == true' id="spellCheckInput" style="width:350px" onblur=" model.SpellCheck(); "></textarea>
                     <div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;"  oncontextmenu=" model.Suggestions()"  data-bind="visible: isSelected() == false "></div>
                 </div>                
             </div>          
