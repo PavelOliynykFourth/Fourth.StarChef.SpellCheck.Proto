@@ -69,6 +69,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="css\Spell.Checker.css" />
     <Content Include="Default.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -85,10 +86,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="scripts\jquery-1.9.1.intellisense.js" />
+    <Content Include="Integration.aspx" />
     <Content Include="scripts\bootstrap.js" />
     <Content Include="scripts\bootstrap.min.js" />
     <Content Include="scripts\jquery-1.9.1.js" />
     <Content Include="scripts\jquery-1.9.1.min.js" />
+    <Content Include="scripts\jquery.min.1.4.js" />
+    <Content Include="scripts\jquery.min.js" />
+    <Content Include="scripts\jquery.Spell.Checker.js" />
     <Content Include="scripts\knockout-3.4.0.debug.js" />
     <Content Include="scripts\knockout-3.4.0.js" />
     <Content Include="scripts\spellchecker.js" />
@@ -104,6 +109,13 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Integration.aspx.cs">
+      <DependentUpon>Integration.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Integration.aspx.designer.cs">
+      <DependentUpon>Integration.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="spellChecker.ashx.cs">

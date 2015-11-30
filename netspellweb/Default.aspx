@@ -7,7 +7,7 @@
     <title>Spell Check</title>
     
     <script src="scripts/jquery-1.9.1.js"></script>
-    <link href="Content/bootstrap.css" rel="stylesheet" />
+    
     <script src="scripts/bootstrap.js"></script>    
     <script src="scripts/knockout-3.4.0.debug.js"></script>
     
@@ -26,11 +26,15 @@
         function SpellCheckViewCtrl3() {
 
             this.isSelected = ko.observable(true);
+
             this.Words = ko.observableArray();
 
             this.textToSpellCheck  = ko.observable();
 
             this.Run = function (val) {
+                if (val === undefined || val == '')
+                    return;
+
                 var words = val.split(' ');
 
                 $("#spellCheckPanel").empty();
