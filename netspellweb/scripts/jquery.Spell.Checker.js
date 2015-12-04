@@ -1,249 +1,318 @@
-/*! HTML5 Spell Checker component - v0.0.1 - 2015-11-30
+/*! HTML5 Spell Checker component - v0.0.1 - 2015-12-03
 * https://github.com/Skypus/Spell.Checker
 * Copyright (c) 2015 Pavel Oliynyk; Licensed MIT */
-// Spell Checker Manager: each spell checker control must be created via manager
- var scManager = {};
+/*! HTML5 Spell Checker component - v0.0.1 - 2015-12-03
+* https://github.com/Skypus/Spell.Checker
+* Copyright (c) 2015 Pavel Oliynyk; Licensed MIT */
 
-(function($) {
+function SpellCheckerManager()
+{
+    var self = this;
 
-  scManager.Controls = [];
+    self.Controls = [];
 
-  scManager.Register = function(id){
-      for(var i = 0; i < scManager.Controls.length; i++)
-      {
-        if ( scManager.Controls[i].Id === id)
-        {
-          return;
-        }
-      }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                Public Methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      //<div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;"  oncontextmenu=" model.Suggestions()"  data-bind="visible: isSelected() == false "></div>
-      var staticPanel = document.createElement("div");
-      var inputCtr = document.getElementById(id);
-      var inputCtrlParent = document.getElementById(id).parentNode;
-
-      inputCtr.setAttribute("onblur", "scManager.OnInputComplete('" + id + "') ");
-
-      var staticPanelId = "StaticPanel" + scManager.Controls.length;
-      staticPanel.id = staticPanelId;
-
-      var style = "height : " + $("#" + inputCtr.id).height() + "px; ";
-      style += "width: " + $("#" + inputCtr.id).width() + "px;";
-      style += "width: " + $("#" + inputCtr.id).width() + "px;";
-      style += "border: 1px solid lightgray;";
-
-      staticPanel.setAttribute("style",  style );
-      staticPanel.setAttribute("position",  "relative; top: -1px" );
-      //staticPanel.setAttribute("oncontextmenu",  " scManager.onContextMenu(event, '" + scManager.Controls.length + "')" );
-
-      inputCtrlParent.appendChild(staticPanel);
-      $("#" + staticPanelId).hide();
-
-      // State: 0 - input on; 1 - show static text/input off;
-      var ctrl = { Id: id, StaticPanelId:  staticPanelId, Words: [], State: 0, Index: scManager.Controls.length };
-      scManager.Controls.push(ctrl);
-  };
-
-  scManager.OnInputComplete = function(id){
-    var val = document.getElementById(id).value;
-    var item = scManager.GetById(id);
-    var words = val !== undefined && val !== '' ? val.split(" ") : [];
-
-    item.Words = [];
-
-    for(var i = 0; i < words.length; i++)
-    {
-      item.Words.push(words[i]);
+    self.SetLocation = function(serviceUrl){
+        self.ServiceLocation = serviceUrl;
     }
 
-    scManager.setStaticPanel(id);
-  };
+    self.Register = function(id){
 
-  scManager.setStaticPanel = function(id){
-    var item = scManager.GetById(id);
-
-    var staticPanel = $("#" + item.StaticPanelId);
-    var parent = $("#" + id);
-    staticPanel.empty();
-
-    for(var i = 0; i < item.Words.length; i++)
-    {
-      var word = item.Words[i];
-
-      scManager.SpellCheck( i, item, word, function(pos, Item, Word, Data){
-        var divStyle = "";
-        var div = document.createElement("div");
-        div.id = Item.StaticPanelId + Word;
-        div.className = "dropdown";
-        divStyle = "display: inline; ";
-        div.setAttribute("oncontextmenu", " scManager.onContextMenu(event, '{ \"ControlIndex\": \"" + Item.Index + "\", \"WordIndex\": \"" + pos + "\" }' ); ");
-        staticPanel.append(div);
-        div.innerHTML = "&nbsp;" + Word;
-
-        if (Data.isCorrect === 0)
+        for(var i = 0; i < self.Controls.length; i++)
         {
-          divStyle += "color: red; ";
-          var ul = document.createElement("ul");
-          ul.id = Item.StaticPanelId + Word + "Suggestions";
-          document.getElementById(Item.StaticPanelId + Word).appendChild( ul );
-
-          for (var j = 0; j < Data.suggestions.length; j++) {
-            var li = document.createElement("li");
-            var a = document.createElement("a");
-
-            ul.appendChild(li);
-            ul.setAttribute("class", "dropdown-menu");
-
-            a.innerHTML = Data.suggestions[j];
-            a.setAttribute("href", "#");
-            //a.setAttribute("onclick", "return model.ReplaceWord(" + pos + ", " + i + ", '" + data.suggestions[i] + "')");
-
-            li.appendChild(a);
+          if ( self.Controls[i].Id === id)
+          {
+            return;
           }
         }
-        div.setAttribute('style', divStyle);
 
-      });
+        //<div id="spellCheckPanel" style="height: 26px; width:350px; border: 1px solid lightgray; position: relative; top: -1px;"  oncontextmenu=" model.Suggestions()"  data-bind="visible: isSelected() == false "></div>
+        var staticPanel = document.createElement("div");
+        var inputCtr = document.getElementById(id);
+        var inputCtrlParent = document.getElementById(id).parentNode;
 
+        inputCtr.setAttribute("onblur", "scManager.OnInputComplete('" + id + "') ");
+        //inputCtr.setAttribute("onblur", "onCustomBlur(event)");
+
+        scManager.TabIndex = self.TabIndex === undefined ? 100 : self.TabIndex + 1;
+        inputCtr.setAttribute("tabIndex", self.TabIndex);
+        //inputCtr.setAttribute("onfocusout", "scManager.OnInputComplete('" + id + "') ");
+
+        var staticPanelId = "StaticPanel" + self.Controls.length;
+        staticPanel.id = staticPanelId;
+        staticPanel.setAttribute("onclick", "scManager.onCustomClick(event, '" + id + "') ");
+
+        var style = "height : " + $("#" + inputCtr.id).height() + "px; ";
+        style += "width: " + $("#" + inputCtr.id).width() + "px;";
+        style += "width: " + $("#" + inputCtr.id).width() + "px;";
+        style += "border: 1px solid lightgray;  background-color: white; ";
+
+        staticPanel.setAttribute("style",  style );
+        staticPanel.setAttribute("position",  "relative; top: -1px" );
+        //staticPanel.setAttribute("oncontextmenu",  " scManager.onContextMenu(event, '" + scManager.Controls.length + "')" );
+
+        inputCtrlParent.appendChild(staticPanel);
+        $("#" + staticPanelId).hide();
+
+        // State: 0 - input on; 1 - show static text/input off;
+        var ctrl = { Id: id, StaticPanelId:  staticPanelId, Words: [], State: 0, Index: self.Controls.length };
+        self.Controls.push(ctrl);
     }
 
-    staticPanel.show();
-    parent.hide();
-    item.Status = 1;
-  };
+    self.OnInputComplete = function(id){
+      var val = document.getElementById(id).value;
 
-  scManager.SpellCheck = function(pos, item, word, callbackFun){
-    //var item = scManager.GetById(id);
-    var d = { 'method': "checkSpelling", 'text':  word };
-    $.ajax({
-           type: "POST",
-           url: "/SpellChecker.ashx",
-           data: JSON.stringify(d),
-           contentType: "application/json; charset=utf-8",
-           dataType: "json",
-           async: false,
-           success: function (data) {
-               callbackFun(pos, item, word, data);
-           },
-           error: function () {
-           }
-       });
-  };
+      var item = GetById(id);
 
-  scManager.onContextMenu = function(event, jsonStr){
-    if (event !== undefined) {
-      event.preventDefault();
-      //console.log(index);
-      var context =  jQuery.parseJSON(jsonStr);
-      var item = scManager.GetByIndex( parseInt(context.ControlIndex) );
-      var id = item.StaticPanelId + item.Words[ parseInt(context.WordIndex) ] + "Suggestions";
+      $("#" + item.StaticPanelId).height( $("#" + id).height() );
+      $("#" + item.StaticPanelId).width( $("#" + id).width() );
 
-      if (scManager.SelectedPopUp !== undefined)
+      var words = val !== undefined && val !== '' ? val.split(" ") : [];
+
+      item.Words = [];
+
+      for(var i = 0; i < words.length; i++)
       {
-        scManager.SelectedPopUp.hide();
+        item.Words.push(words[i]);
       }
-      scManager.SelectedPopUp = $("#" + id);
-      scManager.SelectedPopUp.show();
+
+      setStaticPanel(id);
     }
-  };
 
-  scManager.GetById = function(id){
-    for(var i = 0; i < scManager.Controls.length; i++)
-    {
-      if ( scManager.Controls[i].Id === id)
-      {
-        return scManager.Controls[i];
-      }
-    }
-    return undefined;
-  };
+    self.onContextMenu = function(event, jsonStr){
+      if (event !== undefined) {
 
-  scManager.GetByIndex = function(index){
-    return scManager.Controls[index];
-  };
+        event.preventDefault ? event.preventDefault() : event.returnValue = false;
 
-  scManager.Apply = function(){
-    $(".spellCheckerControl").each(function (index, element) {
-        scManager.Register(element.id);
-    });
-  };
+        //console.log(index);
+        var context =  jQuery.parseJSON(jsonStr);
+        var item = GetByIndex( parseInt(context.ControlIndex) );
+        var id = item.StaticPanelId + "_" + parseInt(context.WordIndex) + "Suggestions";
 
-  scManager.setInputFocus = function(elementId){
-      var index = elementId.replace("StaticPanel", "");
-      $("#" + elementId).hide();
-      var item = scManager.GetByIndex( index );
-      item.Status = 0;
-      $("#" + item.Id ).show();
-      $("#" + item.Id ).focus();
-  };
-
-  // Collection method.
-  $.fn.Spell_Checker = function() {
-
-    return this.each(function(i) {
-      // Do something awesome to each selected element.
-      $(this).html('awesome' + i);
-    });
-  };
-
-  // Static method.
-  $.Spell_Checker = function(options) {
-    // Override default options with passed-in options.
-    options = $.extend({}, $.Spell_Checker.options, options);
-    // Return something awesome.
-    return 'awesome' + options.punctuation;
-  };
-
-  // Static method default options.
-  $.Spell_Checker.options = {
-    punctuation: '.'
-  };
-
-  // Custom selector.
-  $.expr[':'].Spell_Checker = function(elem) {
-    // Is this element awesome?
-    return $(elem).text().indexOf('awesome') !== -1;
-  };
-
-}(jQuery));
-
-
-
-function onDocumentClick(e){
-      if (scManager !== undefined && scManager){
-
-        if (scManager.SelectedPopUp !== undefined)
+        if (self.SelectedPopUp !== undefined)
         {
-          scManager.SelectedPopUp.hide();
+          self.SelectedPopUp.hide();
         }
-
-        if (e.target.parentElement != null && e.target.parentElement.localName === "li") {
-              e.preventDefault();
-              return;
-        } else if (e.target.id !== undefined && (e.target.id.indexOf("StaticPanel")  >= 0 || (e.target.parentNode.id !== undefined && e.target.parentNode.id.indexOf("StaticPanel")  >= 0) )  ) {
-              var index = -1;
-              var elementId;
-              if (e.target.id.indexOf("StaticPanel")  >= 0)
-              {
-                var innerHTML = e.target.innerHTML !== undefined ? e.target.innerHTML.replace("&nbsp;", "").trim(): undefined;
-                index = e.target.id.replace("StaticPanel", "");
-                index = innerHTML !== undefined && innerHTML.length > 0 ? index.replace(innerHTML, "") : index;
-                elementId = innerHTML !== undefined ? e.target.id.replace(innerHTML, "") : e.target.id;
-              }
-              else if (e.target.parentNode.id.indexOf("StaticPanel")  >= 0)
-              {
-                index = e.target.parentNode.id.replace("StaticPanel", "");
-                elementId = e.target.parentNode.id;
-              }
-
-              var item = scManager.GetByIndex(index);
-              if (item !== undefined && item.Status === 1)
-              {
-                scManager.setInputFocus(elementId);
-              }
-        }
-        return;
+        self.SelectedPopUp = $("#" + id);
+        self.SelectedPopUp.show();
       }
-  }
+    }
 
-  document.onclick = onDocumentClick;
+    self.Apply = function(){
+      var list = $(".spellCheckerControl");
+      if ( list !== undefined)
+      {
+          for(var i = 0; i < list.length; i++)
+          {
+              var element = list[i];
+              if (element !== undefined && element.id !== undefined)
+              {
+                self.Register(element.id)
+              }
+          }
+      }
+    };
+
+    self.onCustomClick = function(event, idx){
+          if (self !== undefined && self){
+
+            if (self.SelectedPopUp !== undefined)
+            {
+              self.SelectedPopUp.hide();
+            }
+
+            if (event.target && event.target.parentElement != null && event.target.parentElement.localName === "li") {
+                  event.preventDefault ? event.preventDefault() : event.returnValue = false;
+                  return;
+            } else if (event.target && event.target.id !== undefined && (event.target.id.indexOf("StaticPanel")  >= 0 || (event.target.parentNode.id !== undefined && event.target.parentNode.id.indexOf("StaticPanel")  >= 0) )  ) {
+                  var index = -1;
+                  var elementId;
+                  if (event.target.id.indexOf("StaticPanel")  >= 0)
+                  {
+                    var innerHTML = event.target.innerHTML !== undefined ? event.target.innerHTML.replace("&nbsp;", "").trim(): undefined;
+                    index = event.target.id.replace("StaticPanel", "");
+                    index = innerHTML !== undefined && innerHTML.length > 0 ? index.replace(innerHTML, "") : index;
+                    elementId = innerHTML !== undefined ? event.target.id.replace(innerHTML, "") : event.target.id;
+                  }
+                  else if (event.target.parentNode.id.indexOf("StaticPanel")  >= 0)
+                  {
+                    index = event.target.parentNode.id.replace("StaticPanel", "");
+                    elementId = event.target.parentNode.id;
+                  }
+
+                  var item = GetByIndex(index);
+                  if (item !== undefined && item.Status === 1)
+                  {
+                    setInputFocus(elementId);
+                  }
+            } else if (event.srcElement) {
+              var id = event.srcElement.id;
+
+              if (id !== undefined && id.indexOf("SpellHref") >= 0)
+              {
+
+                return;
+              } else {
+
+                var item = GetById( idx );
+
+                var elementId = item.StaticPanelId;
+
+                setInputFocus(elementId);
+
+              }
+            }
+            return;
+          }
+      }
+
+    self.CheckAll = function(){
+        for(var i = 0; i < self.Controls.length; i++)
+        {
+          var value = $("#" + self.Controls[i].Id ).val();
+          if (value !== undefined && value.length > 1)
+          {
+            self.OnInputComplete( self.Controls[i].Id );
+          }
+        }
+    }
+
+    self.Fix = function(jsonStr){
+
+        var context =  jQuery.parseJSON(jsonStr);
+
+        var item = GetByIndex( parseInt(context.ControlIndex) );
+
+        // Item.StaticPanelId + "_" + pos + "Span";
+        var id = item.StaticPanelId + "_" + context.WordIndex + "Span";
+
+        $("#" + id ).html("&nbsp;" + context.ReplaceWith);
+
+        item.Words[ parseInt( context.WordIndex ) ] = context.ReplaceWith;
+
+        $("#" + item.Id ).val( GetSentance(item) );
+
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                Private Methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    function setStaticPanel(id){
+      var item = GetById(id);
+
+      var staticPanel = $("#" + item.StaticPanelId);
+      var parent = $("#" + id);
+      staticPanel.empty();
+
+      for(var i = 0; i < item.Words.length; i++)
+      {
+        var word = item.Words[i];
+
+        SpellCheck( i, item, word, function(pos, Item, Word, Data){
+          var divStyle = "";
+          var div = document.createElement("div");
+          div.id = Item.StaticPanelId + "_" + pos;
+          div.className = "dropdown";
+          divStyle = "display: inline;";
+          div.setAttribute("oncontextmenu", " scManager.onContextMenu(event, '{ \"ControlIndex\": \"" + Item.Index + "\", \"WordIndex\": \"" + pos + "\" }' ); ");
+          staticPanel.append(div);
+
+          //div.innerHTML = "&nbsp;" + Word;
+          var span = document.createElement("span");
+          span.id = Item.StaticPanelId + "_" + pos + "Span";
+          span.innerHTML = "&nbsp;" + Word;
+          div.appendChild(span);
+
+          if (Data.isCorrect === 0)
+          {
+            divStyle += "color: red; ";
+            var ul = document.createElement("ul");
+            ul.id = Item.StaticPanelId + "_" + pos + "Suggestions";
+            document.getElementById(div.id).appendChild( ul );
+
+            for (var j = 0; j < Data.suggestions.length; j++) {
+              var li = document.createElement("li");
+              var a = document.createElement("a");
+              a.id = Item.StaticPanelId + "_" + pos + "SpellHref" + "_" + j ;
+              ul.appendChild(li);
+              ul.setAttribute("class", "dropdown-menu");
+
+              a.innerHTML = Data.suggestions[j];
+              a.setAttribute("href", "#");
+              a.setAttribute("onclick", "return scManager.Fix('{ \"ControlIndex\": \"" + Item.Index + "\", \"WordIndex\": \"" + pos + "\", \"ReplaceWith\": \"" + Data.suggestions[j] + "\" }' ); ");
+
+              li.appendChild(a);
+            }
+          }
+          div.setAttribute('style', divStyle);
+
+        });
+
+      }
+
+      staticPanel.show();
+      parent.hide();
+      item.Status = 1;
+    };
+
+    function SpellCheck (pos, item, word, callbackFun){
+
+      var d = { 'method': "checkSpelling", 'text':  word };
+      $.ajax({
+             type: "POST",
+             url: self.ServiceLocation !== undefined ? self.ServiceLocation : "/SpellChecker.ashx",
+             data: JSON.stringify(d),
+             contentType: "application/json; charset=utf-8",
+             dataType: "json",
+             async: false,
+             success: function (data) {
+                 callbackFun(pos, item, word, data);
+             },
+             error: function () {
+             }
+         });
+    }
+
+    function GetById(id){
+      for(var i = 0; i < self.Controls.length; i++)
+      {
+        if (self.Controls[i].Id === id)
+        {
+          return self.Controls[i];
+        }
+      }
+      return undefined;
+    }
+
+    function GetByIndex(index){
+      return self.Controls[index];
+    }
+
+    function setInputFocus(elementId){
+        var index = elementId.replace("StaticPanel", "");
+        $("#" + elementId).hide();
+        var item = GetByIndex( index );
+        item.Status = 0;
+        $("#" + item.Id ).show();
+        $("#" + item.Id ).focus();
+    };
+
+    function GetSentance (item){
+      var result = "";
+      for(var i = 0; i < item.Words.length; i++)
+      {
+        result += (" " + item.Words[i]);
+      }
+      return result;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    return self;
+}
+
+var scManager = new SpellCheckerManager();

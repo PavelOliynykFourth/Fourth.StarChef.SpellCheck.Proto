@@ -35,7 +35,7 @@
                     Data to be entered:
                 </td>
                 <td>
-                    <sc:ChangeTrackerTextBox ID="txtInternalCode" Runat="server" ReadOnly="False" MaxLength="50" Style="width: 250px" SpellingEnabled="true"></sc:ChangeTrackerTextBox>
+                    <sc:ChangeTrackerTextBox ID="txtInternalCode" Runat="server" ReadOnly="False" MaxLength="50" Style="width: 350px" SpellingEnabled="true"></sc:ChangeTrackerTextBox>
                 </td>
             </tr>
             <tr>
